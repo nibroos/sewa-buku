@@ -1,4 +1,5 @@
 <?php
+ob_start();
 include('config.php');
 $koneksi = new database();
 
@@ -28,8 +29,10 @@ if (in_array($ekstensi, $daftar_list)) {
     $_POST['pekerjaan'],
     $dir_foto_peminjam
   );
-  header('location: tampilkan_data_peminjam.php');
+  header('location: browse_data.php');
+  ob_flush();
 } else {
   echo "Type file harus berupa gambar <br>";
   header('location: browse_data.php');
+  ob_flush();
 }

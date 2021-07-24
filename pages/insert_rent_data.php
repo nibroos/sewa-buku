@@ -1,8 +1,10 @@
 <?php
 session_start();
-$username = $_SESSION['username'];
+ob_start();
 include 'config.php';
 $db = new database();
+$username = $_SESSION['username'];
+if (!isset($username)) header("Location: ../login.php");
 
 foreach ($db->login($username) as $x) {
   $akses_id = $x['akses_id'];
@@ -25,7 +27,6 @@ foreach ($db->login($username) as $x) {
       <link href="../dist/css/style.min.css" rel="stylesheet">
       <!-- Select2 -->
       <link rel="stylesheet" href="../assets/extra-libs/select2/css/select2.min.css">
-      <link rel="stylesheet" href="../assets/extra-libs/select2-bootstrap4.min.css">
       <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
       <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
       <!--[if lt IE 9]>
@@ -299,7 +300,8 @@ foreach ($db->login($username) as $x) {
     </html>
 <?php
   } else {
-    header("Location: login.php");
+    header("Location: ../login.php");
   }
 }
+ob_flush();
 ?>

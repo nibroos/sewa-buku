@@ -1,8 +1,10 @@
 <?php
 session_start();
-$username = $_SESSION['username'];
+ob_start();
 include 'config.php';
 $db = new database();
+$username = $_SESSION['username'];
+if (!isset($username)) header("Location: ../login.php");
 
 foreach ($db->login($username) as $x) {
   $akses_id = $x['akses_id'];
@@ -430,7 +432,8 @@ foreach ($db->login($username) as $x) {
     </html>
 <?php
   } else {
-    header("Location: login.php");
+    header("Location: ../login.php");
   }
 }
+ob_flush();
 ?>

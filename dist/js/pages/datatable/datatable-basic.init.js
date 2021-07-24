@@ -11,6 +11,9 @@
 $('#zero_config').DataTable({
     "responsive": true,
     "autoWidth": true,
+    "language": {
+        "emptyTable": "No data available in table"
+    },
     "order" : [0, "desc"]
 });
 
@@ -53,4 +56,13 @@ $('#authors_order').DataTable({
     "responsive": true,
     "autoWidth": true,
     "order" : [1, "asc"]
+});
+
+$('#my_rent').DataTable({
+    "responsive": true,
+    "autoWidth": true,
+    "language": {
+        "emptyTable": "You haven't rented a book"
+    },
+    "order" : [0, "desc"]
 });

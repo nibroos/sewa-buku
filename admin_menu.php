@@ -1,5 +1,6 @@
 <?php
 session_start();
+ob_start();
 $username = $_SESSION['username'];
 include 'pages/config.php';
 $db = new database();
@@ -207,7 +208,7 @@ foreach ($db->login($username) as $x) {
                     <div class="d-flex d-lg-flex d-md-block align-items-center">
                       <div>
                         <div class="d-inline-flex align-items-center">
-                          <h2 class="text-dark mb-1 font-weight-medium">236</h2>
+                          <h2 class="text-dark mb-1 font-weight-medium"><?php $db->count_rental_data(); ?></h2>
                         </div>
                         <h6 class="text-muted font-weight-normal mb-0 w-100 text-truncate">Buku Disewa</h6>
                       </div>
@@ -223,7 +224,7 @@ foreach ($db->login($username) as $x) {
                   <div class="card-body">
                     <div class="d-flex d-lg-flex d-md-block align-items-center">
                       <div>
-                        <h2 class="text-dark mb-1 w-100 text-truncate font-weight-medium">18,306</h2>
+                        <h2 class="text-dark mb-1 w-100 text-truncate font-weight-medium"><?php $db->count_data_buku(); ?></h2>
                         <h6 class="text-muted font-weight-normal mb-0 w-100 text-truncate">Total Buku
                         </h6>
                       </div>
@@ -240,7 +241,7 @@ foreach ($db->login($username) as $x) {
                     <div class="d-flex d-lg-flex d-md-block align-items-center">
                       <div>
                         <div class="d-inline-flex align-items-center">
-                          <h2 class="text-dark mb-1 font-weight-medium">1538</h2>
+                          <h2 class="text-dark mb-1 font-weight-medium"><?php $db->count_account_data(); ?></h2>
                         </div>
                         <h6 class="text-muted font-weight-normal mb-0 w-100 text-truncate">Akun Peminjam</h6>
                       </div>
@@ -298,4 +299,5 @@ foreach ($db->login($username) as $x) {
     header("Location: pages/login.php");
   }
 }
+ob_flush();
 ?>

@@ -39,12 +39,17 @@ class database
 
   function tambah_data_peminjam($kode_peminjam, $nama_peminjam, $jenis_kelamin, $tanggal_lahir, $alamat, $pekerjaan, $foto)
   {
+    $ambil_id_peminjam = mysqli_query($this->koneksi, "SELECT id FROM data_peminjam ORDER BY id DESC LIMIT 1");
+    $row_id_peminjam = mysqli_fetch_array($ambil_id_peminjam);
+    $hasil_id_peminjam = $row_id_peminjam['id'];
+    $id_peminjam = $hasil_id_peminjam + 1;
     mysqli_query($this->koneksi, "INSERT INTO data_peminjam 
-                    VALUES ('','$kode_peminjam','$nama_peminjam','$jenis_kelamin', '$tanggal_lahir', '$alamat', '$pekerjaan','','$foto')");
-    $ambil_id = mysqli_query($this->koneksi, "SELECT id FROM data_peminjam ORDER BY id DESC LIMIT 1");
+                    VALUES ('$id_peminjam','$kode_peminjam','$nama_peminjam','$jenis_kelamin', '$tanggal_lahir', '$alamat', '$pekerjaan','0','$foto')");
+    $ambil_id = mysqli_query($this->koneksi, "SELECT id FROM user ORDER BY id DESC LIMIT 1");
     $row_id = mysqli_fetch_array($ambil_id);
     $hasil_id = $row_id['id'];
-    mysqli_query($this->koneksi, "INSERT INTO user VALUES('', '$kode_peminjam', '$kode_peminjam', '2', '$hasil_id')");
+    $id = $hasil_id + 1;
+    mysqli_query($this->koneksi, "INSERT INTO user VALUES('$id', '$kode_peminjam', '$kode_peminjam', '2', '$hasil_id')");
   }
   function kode_peminjam($kode_peminjam)
   {
@@ -54,19 +59,17 @@ class database
     }
     return $hasil_peminjam;
   }
-  function edit_data_peminjam($kode_peminjam, $nama_peminjam, $jenis_kelamin, $tanggal_lahir, $alamat, $pekerjaan, $foto)
-  {
-    mysqli_query($this->koneksi, "UPDATE data_peminjam SET nama_peminjam='$nama_peminjam', jenis_kelamin='$jenis_kelamin', 
-                tanggal_lahir='$tanggal_lahir', alamat='$alamat', pekerjaan='$pekerjaan', foto='$foto' 
-                WHERE kode_peminjam = '$kode_peminjam'");
-  }
   function hapus_data_peminjam($kode_peminjam)
   {
     mysqli_query($this->koneksi, "DELETE FROM data_peminjam WHERE kode_peminjam = '$kode_peminjam'");
   }
   function tambah_data_jenis_buku($kode_jenis_buku, $nama_jenis_buku)
   {
-    mysqli_query($this->koneksi, "INSERT INTO data_jenis_buku VALUES('', '$kode_jenis_buku', '$nama_jenis_buku')");
+    $ambil_id = mysqli_query($this->koneksi, "SELECT id FROM data_jenis_buku ORDER BY id DESC LIMIT 1");
+    $row_id = mysqli_fetch_array($ambil_id);
+    $hasil_id = $row_id['id'];
+    $id = $hasil_id + 1;
+    mysqli_query($this->koneksi, "INSERT INTO data_jenis_buku VALUES('$id', '$kode_jenis_buku', '$nama_jenis_buku')");
   }
   function tampil_data_jenis_buku()
   {
@@ -78,7 +81,11 @@ class database
   }
   function tambah_data_penerbit($kode_penerbit, $nama_penerbit)
   {
-    mysqli_query($this->koneksi, "INSERT INTO data_penerbit VALUES('', '$kode_penerbit', '$nama_penerbit')");
+    $ambil_id = mysqli_query($this->koneksi, "SELECT id FROM data_penerbit ORDER BY id DESC LIMIT 1");
+    $row_id = mysqli_fetch_array($ambil_id);
+    $hasil_id = $row_id['id'];
+    $id = $hasil_id + 1;
+    mysqli_query($this->koneksi, "INSERT INTO data_penerbit VALUES('$id', '$kode_penerbit', '$nama_penerbit')");
   }
   function tampil_data_penerbit()
   {
@@ -90,7 +97,11 @@ class database
   }
   function tambah_data_pengarang($kode_pengarang, $nama_pengarang)
   {
-    mysqli_query($this->koneksi, "INSERT INTO data_pengarang VALUES('', '$kode_pengarang', '$nama_pengarang')");
+    $ambil_id = mysqli_query($this->koneksi, "SELECT id FROM data_pengarang ORDER BY id DESC LIMIT 1");
+    $row_id = mysqli_fetch_array($ambil_id);
+    $hasil_id = $row_id['id'];
+    $id = $hasil_id + 1;
+    mysqli_query($this->koneksi, "INSERT INTO data_pengarang VALUES('$id', '$kode_pengarang', '$nama_pengarang')");
   }
   function tampil_data_pengarang()
   {
@@ -126,7 +137,11 @@ class database
   }
   function tambah_data_buku($kode_buku, $judul_buku, $kode_pengarang, $kode_jenis_buku, $kode_penerbit, $isbn, $tahun, $deskripsi, $jumlah)
   {
-    mysqli_query($this->koneksi, "INSERT INTO data_buku VALUES ('','$kode_buku', '$judul_buku', '$kode_pengarang', '$kode_jenis_buku', '$kode_penerbit', '$isbn', '$tahun', '$deskripsi', '$jumlah')");
+    $ambil_id = mysqli_query($this->koneksi, "SELECT id FROM data_buku ORDER BY id DESC LIMIT 1");
+    $row_id = mysqli_fetch_array($ambil_id);
+    $hasil_id = $row_id['id'];
+    $id = $hasil_id + 1;
+    mysqli_query($this->koneksi, "INSERT INTO data_buku VALUES ('$id','$kode_buku', '$judul_buku', '$kode_pengarang', '$kode_jenis_buku', '$kode_penerbit', '$isbn', '$tahun', '$deskripsi', '$jumlah')");
   }
   function tampil_data_buku()
   {
@@ -157,9 +172,13 @@ class database
   }
   function tambah_peminjaman($kode_buku, $kode_peminjam)
   {
+    $ambil_id = mysqli_query($this->koneksi, "SELECT id FROM peminjaman ORDER BY id DESC LIMIT 1");
+    $row_id = mysqli_fetch_array($ambil_id);
+    $hasil_id = $row_id['id'];
+    $id = $hasil_id + 1;
     $tanggal_pinjam = date('Y-m-d');
     $tanggal_kembali = date('Y-m-d', time() + (60 * 60 * 24 * 7));
-    mysqli_query($this->koneksi, " INSERT INTO peminjaman VALUES ('','$kode_buku','$kode_peminjam',
+    mysqli_query($this->koneksi, " INSERT INTO peminjaman VALUES ('$id','$kode_buku','$kode_peminjam',
                 '$tanggal_pinjam','$tanggal_kembali','1')");
   }
   function tampil_peminjaman()
@@ -214,12 +233,55 @@ class database
     return $hasil_peminjam;
   }
 
-  function edit_peminjam($kode_peminjam, $nama_peminjam, $jenis_kelamin, $tanggal_lahir, $alamat, $pekerjaan, $password)
+  function edit_data_peminjam($kode_peminjam, $nama_peminjam, $jenis_kelamin, $tanggal_lahir, $alamat, $pekerjaan)
   {
-    mysqli_query($this->koneksi, "UPDATE data_peminjam 
-                        SET nama_peminjam='$nama_peminjam', jenis_kelamin='$jenis_kelamin', tanggal_lahir='$tanggal_lahir', alamat='$alamat', pekerjaan='$pekerjaan' 
-                        WHERE kode_peminjam = '$kode_peminjam'");
+    mysqli_query($this->koneksi, "UPDATE data_peminjam SET nama_peminjam='$nama_peminjam', jenis_kelamin='$jenis_kelamin', 
+                tanggal_lahir='$tanggal_lahir', alamat='$alamat', pekerjaan='$pekerjaan'
+                WHERE kode_peminjam='$kode_peminjam'");
+  }
+
+  function edit_peminjam($kode_peminjam, $nama_peminjam, $jenis_kelamin, $tanggal_lahir, $alamat, $pekerjaan, $password, $foto)
+  {
+    mysqli_query($this->koneksi, "UPDATE data_peminjam SET nama_peminjam = '$nama_peminjam', jenis_kelamin = '$jenis_kelamin', 
+            tanggal_lahir = '$tanggal_lahir', alamat = '$alamat', pekerjaan = '$pekerjaan', foto = '$foto' WHERE kode_peminjam = '$kode_peminjam'");
     mysqli_query($this->koneksi, "UPDATE user SET password = '$password' WHERE username = '$kode_peminjam'");
+  }
+
+  function count_data_buku()
+  {
+    $qresult = mysqli_query($this->koneksi, "SELECT count(*) FROM data_buku");
+    $row = mysqli_fetch_assoc($qresult);
+    $count = $row["count(*)"];
+    echo $count;
+  }
+
+  function count_rental_data()
+  {
+    $qresult = mysqli_query($this->koneksi, "SELECT count(*) FROM peminjaman");
+    $row = mysqli_fetch_assoc($qresult);
+    $count = $row["count(*)"];
+    echo $count;
+  }
+
+  function count_rental_account_data($kode_peminjam)
+  {
+    $qresult = mysqli_query($this->koneksi, "SELECT count(*) FROM peminjaman WHERE kode_peminjam = '$kode_peminjam'");
+    $row = mysqli_fetch_assoc($qresult);
+    $count = $row["count(*)"];
+    echo $count;
+  }
+
+  function count_account_data()
+  {
+    $qresult = mysqli_query($this->koneksi, "SELECT count(*) FROM data_peminjam");
+    $row = mysqli_fetch_assoc($qresult);
+    $count = $row["count(*)"];
+    echo $count;
+  }
+
+  function ambil_foto_peminjam($kode_peminjam)
+  {
+    mysqli_query($this->koneksi, "SELECT * FROM data_peminjam WHERE kode_peminjam = '$kode_peminjam'");
   }
 
   function test()

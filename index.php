@@ -1,9 +1,10 @@
 <?php
 session_start();
+ob_start();
 $username = $_SESSION['username'];
 include 'pages/config.php';
 $db = new database();
-
+if (!isset($username)) header("Location: login.php");
 foreach ($db->login($username) as $x) {
   $akses_id = $x['akses_id'];
   if ($akses_id == '2') {
@@ -63,7 +64,7 @@ foreach ($db->login($username) as $x) {
               <!-- ============================================================== -->
               <div class="navbar-brand">
                 <!-- Logo icon -->
-                <a href="admin_menu.php">
+                <a href="index.php">
                   <b class="logo-icon">
                     <!-- Logo icon -->
                     <svg id="Icons_Media_ic-media-collection" data-name="Icons / Media / ic-media-collection" xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24">
@@ -113,10 +114,11 @@ foreach ($db->login($username) as $x) {
                 <li class="nav-item dropdown">
                   <a class="nav-link dropdown-toggle" href="javascript:void(0)" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                     <img src="assets/images/users/profile-pic.jpg" alt="user" class="rounded-circle" width="40">
-                    <span class="ml-2 d-none d-lg-inline-block"><span>Hello,</span> <span class="text-dark">Jason Doe</span> <i data-feather="chevron-down" class="svg-icon"></i></span>
+                    <?php $data_peminjam = $db->tampil_peminjam($username); ?>
+                    <span class="ml-2 d-none d-lg-inline-block"><span>Hello,</span> <span class="text-dark"><?= $data_peminjam[0]['kode_peminjam']; ?></span> <i data-feather="chevron-down" class="svg-icon"></i></span>
                   </a>
                   <div class="dropdown-menu dropdown-menu-right user-dd animated flipInY">
-                    <a class="dropdown-item" href="javascript:void(0)"><i data-feather="settings" class="svg-icon mr-2 ml-1"></i>
+                    <a class="dropdown-item" href="pages/user_settings.php"><i data-feather="settings" class="svg-icon mr-2 ml-1"></i>
                       Account Setting</a>
                     <div class="dropdown-divider"></div>
                     <a class="dropdown-item" href="pages/logout.php"><i data-feather="power" class="svg-icon mr-2 ml-1"></i>
@@ -142,22 +144,11 @@ foreach ($db->login($username) as $x) {
             <!-- Sidebar navigation-->
             <nav class="sidebar-nav">
               <ul id="sidebarnav">
-                <li class="sidebar-item"> <a class="sidebar-link sidebar-link" href="admin_menu.php" aria-expanded="false"><i data-feather="home" class="feather-icon"></i><span class="hide-menu">Dashboard</span></a></li>
+                <li class="sidebar-item"> <a class="sidebar-link sidebar-link" href="index.php" aria-expanded="false"><i data-feather="home" class="feather-icon"></i><span class="hide-menu">Dashboard</span></a></li>
                 <li class="list-divider"></li>
                 <li class="nav-small-cap"><span class="hide-menu">Applications</span></li>
-                <li class="sidebar-item"><a class="sidebar-link sidebar-link" href="pages/browse_data.php" aria-expanded="false"><i data-feather="file-text" class="feather-icon"></i><span class="hide-menu">Browse Data</span></a></li>
-                <li class="sidebar-item"><a class="sidebar-link has-arrow" href="javascript:void(0)" aria-expanded="false"><i data-feather="plus" class="feather-icon"></i><span class="hide-menu">Insert Data</span></a>
-                  <ul aria-expanded="true" class="collapse first-level base-level-line">
-                    <li class="sidebar-item"> <a class="sidebar-link" href="pages/insert_rent_data.php" aria-expanded="false"><i data-feather="send" class="feather-icon"></i><span class="hide-menu">Rental
-                        </span></a>
-                    </li>
-                    <li class="sidebar-item"> <a class="sidebar-link sidebar-link" href="pages/insert_book_data.php" aria-expanded="false"><i data-feather="book" class="feather-icon"></i><span class="hide-menu">Books</span></a></li>
-                    <li class="sidebar-item"> <a class="sidebar-link sidebar-link" href="pages/add_account_data.php" aria-expanded="false"><i data-feather="user" class="feather-icon"></i><span class="hide-menu">User Account</span></a></li>
-                    <li class="sidebar-item"> <a class="sidebar-link sidebar-link" href="pages/insert_genre_data.php" aria-expanded="false"><i class="icon-layers"></i><span class="hide-menu">Genre</span></a></li>
-                    <li class="sidebar-item"> <a class="sidebar-link sidebar-link" href="pages/insert_publisher_data.php" aria-expanded="false"><i class="icon-people"></i><span class="hide-menu">Publisher</span></a></li>
-                    <li class="sidebar-item"> <a class="sidebar-link sidebar-link" href="pages/insert_author_data.php" aria-expanded="false"><i class="icon-emotsmile"></i><span class="hide-menu">Authors</span></a></li>
-                  </ul>
-                </li>
+                <li class="sidebar-item"><a class="sidebar-link sidebar-link" href="pages/user_rent.php" aria-expanded="false"><i data-feather="send" class="feather-icon"></i><span class="hide-menu">My Rent</span></a></li>
+                <li class="sidebar-item"><a class="sidebar-link sidebar-link" href="pages/book_data.php" aria-expanded="false"><i data-feather="book" class="feather-icon"></i><span class="hide-menu">Books Data</span></a></li>
                 <li class="list-divider"></li>
                 <li class="sidebar-item"><a class="sidebar-link sidebar-link" href="pages/logout.php" aria-expanded="false"><i data-feather="log-out" class="feather-icon"></i><span class="hide-menu">Logout</span></a></li>
               </ul>
@@ -179,11 +170,11 @@ foreach ($db->login($username) as $x) {
           <div class="page-breadcrumb">
             <div class="row">
               <div class="col-7 align-self-center">
-                <h3 class="page-title text-truncate text-dark font-weight-medium mb-1">Welcome Back Admin!</h3>
+                <h3 class="page-title text-truncate text-dark font-weight-medium mb-1">Welcome Back <?= $data_peminjam[0]['nama_peminjam']; ?>!</h3>
                 <div class="d-flex align-items-center">
                   <nav aria-label="breadcrumb">
                     <ol class="breadcrumb m-0 p-0">
-                      <li class="breadcrumb-item"><a href="index.html">Dashboard</a>
+                      <li class="breadcrumb-item"><a href="index.php">Dashboard</a>
                       </li>
                     </ol>
                   </nav>
@@ -203,12 +194,12 @@ foreach ($db->login($username) as $x) {
             <!-- *************************************************************** -->
             <div class="card-group">
               <div class="card border-right">
-                <a href="pages/browse_data.php">
+                <a href="pages/user_rent.php">
                   <div class="card-body">
                     <div class="d-flex d-lg-flex d-md-block align-items-center">
                       <div>
                         <div class="d-inline-flex align-items-center">
-                          <h2 class="text-dark mb-1 font-weight-medium">236</h2>
+                          <h2 class="text-dark mb-1 font-weight-medium"><?php $db->count_rental_account_data($username); ?></h2>
                         </div>
                         <h6 class="text-muted font-weight-normal mb-0 w-100 text-truncate">Buku Disewa</h6>
                       </div>
@@ -220,11 +211,11 @@ foreach ($db->login($username) as $x) {
                 </a>
               </div>
               <div class="card border-right">
-                <a href="pages/browse_data.php">
+                <a href="pages/book_data.php">
                   <div class="card-body">
                     <div class="d-flex d-lg-flex d-md-block align-items-center">
                       <div>
-                        <h2 class="text-dark mb-1 w-100 text-truncate font-weight-medium">18,306</h2>
+                        <h2 class="text-dark mb-1 w-100 text-truncate font-weight-medium"><?php $db->count_data_buku(); ?></h2>
                         <h6 class="text-muted font-weight-normal mb-0 w-100 text-truncate">Total Buku
                         </h6>
                       </div>
@@ -236,12 +227,12 @@ foreach ($db->login($username) as $x) {
                 </a>
               </div>
               <div class="card border-right">
-                <a href="pages/browse_data.php">
+                <a class="text-decoration-none">
                   <div class="card-body">
                     <div class="d-flex d-lg-flex d-md-block align-items-center">
                       <div>
                         <div class="d-inline-flex align-items-center">
-                          <h2 class="text-dark mb-1 font-weight-medium">1538</h2>
+                          <h2 class="text-dark mb-1 font-weight-medium"><?php $db->count_account_data(); ?></h2>
                         </div>
                         <h6 class="text-muted font-weight-normal mb-0 w-100 text-truncate">Akun Peminjam</h6>
                       </div>
@@ -296,7 +287,8 @@ foreach ($db->login($username) as $x) {
     </html>
 <?php
   } else {
-    header("Location: pages/login.php");
+    header("Location: login.php");
   }
 }
+ob_flush();
 ?>

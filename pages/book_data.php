@@ -1,6 +1,7 @@
 <?php
 session_start();
 ob_start();
+error_reporting(0);
 include 'config.php';
 $db = new database();
 $username = $_SESSION['username'];
@@ -8,7 +9,7 @@ if (!isset($username)) header("Location: ../login.php");
 
 foreach ($db->login($username) as $x) {
   $akses_id = $x['akses_id'];
-  if ($akses_id == '1') {
+  if ($akses_id == '2') {
 ?>
     <!DOCTYPE html>
     <html dir="ltr" lang="en">
@@ -22,28 +23,22 @@ foreach ($db->login($username) as $x) {
       <meta name="author" content="">
       <!-- Favicon icon -->
       <link rel="icon" type="image/png" sizes="16x16" href="../assets/images/favicon.png">
-      <title>Edit Account - Rent Books</title>
+      <title>Books Data - Rent Books</title>
+      <!-- This page plugin CSS -->
+      <link href="../assets/extra-libs/datatables.net-bs4/css/dataTables.bootstrap4.css" rel="stylesheet">
       <!-- Custom CSS -->
       <link href="../dist/css/style.min.css" rel="stylesheet">
-      <!-- Select2 -->
-      <link rel="stylesheet" href="../assets/extra-libs/select2/css/select2.min.css">
+      <!-- This Page CSS -->
+      <link rel="stylesheet" type="text/css" href="../assets/extra-libs/prism/prism.css">
       <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
       <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
       <!--[if lt IE 9]>
-    <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
-    <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+  <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+  <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
 <![endif]-->
     </head>
 
     <body>
-      <?php
-      if (isset($_GET['id'])) {
-        $kode_peminjam = $_GET['id'];
-        $data_peminjam = $db->kode_peminjam($kode_peminjam);
-      } else {
-        header('Location: browse_data.php');
-      }
-      ?>
       <!-- ============================================================== -->
       <!-- Preloader - style you can find in spinners.css -->
       <!-- ============================================================== -->
@@ -70,7 +65,7 @@ foreach ($db->login($username) as $x) {
               <!-- ============================================================== -->
               <div class="navbar-brand">
                 <!-- Logo icon -->
-                <a href="../admin_menu.php">
+                <a href="index.php">
                   <b class="logo-icon">
                     <!-- Logo icon -->
                     <svg id="Icons_Media_ic-media-collection" data-name="Icons / Media / ic-media-collection" xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24">
@@ -120,10 +115,11 @@ foreach ($db->login($username) as $x) {
                 <li class="nav-item dropdown">
                   <a class="nav-link dropdown-toggle" href="javascript:void(0)" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                     <img src="../assets/images/users/profile-pic.jpg" alt="user" class="rounded-circle" width="40">
-                    <span class="ml-2 d-none d-lg-inline-block"><span>Hello,</span> <span class="text-dark">Admin</span> <i data-feather="chevron-down" class="svg-icon"></i></span>
+                    <?php $data_peminjam = $db->tampil_peminjam($username); ?>
+                    <span class="ml-2 d-none d-lg-inline-block"><span>Hello,</span> <span class="text-dark"><?= $data_peminjam[0]['kode_peminjam']; ?></span> <i data-feather="chevron-down" class="svg-icon"></i></span>
                   </a>
                   <div class="dropdown-menu dropdown-menu-right user-dd animated flipInY">
-                    <a class="dropdown-item" href="javascript:void(0)"><i data-feather="settings" class="svg-icon mr-2 ml-1"></i>
+                    <a class="dropdown-item" href="user_settings.php"><i data-feather="settings" class="svg-icon mr-2 ml-1"></i>
                       Account Setting</a>
                     <div class="dropdown-divider"></div>
                     <a class="dropdown-item" href="logout.php"><i data-feather="power" class="svg-icon mr-2 ml-1"></i>
@@ -149,22 +145,11 @@ foreach ($db->login($username) as $x) {
             <!-- Sidebar navigation-->
             <nav class="sidebar-nav">
               <ul id="sidebarnav">
-                <li class="sidebar-item"> <a class="sidebar-link sidebar-link" href="../admin_menu.php" aria-expanded="false"><i data-feather="home" class="feather-icon"></i><span class="hide-menu">Dashboard</span></a></li>
+                <li class="sidebar-item"> <a class="sidebar-link sidebar-link" href="../index.php" aria-expanded="false"><i data-feather="home" class="feather-icon"></i><span class="hide-menu">Dashboard</span></a></li>
                 <li class="list-divider"></li>
                 <li class="nav-small-cap"><span class="hide-menu">Applications</span></li>
-                <li class="sidebar-item"><a class="sidebar-link sidebar-link" href="browse_data.php" aria-expanded="false"><i data-feather="file-text" class="feather-icon"></i><span class="hide-menu">Browse Data</span></a></li>
-                <li class="sidebar-item"><a class="sidebar-link has-arrow" href="javascript:void(0)" aria-expanded="false"><i data-feather="plus" class="feather-icon"></i><span class="hide-menu">Insert Data</span></a>
-                  <ul aria-expanded="true" class="collapse first-level base-level-line">
-                    <li class="sidebar-item"> <a class="sidebar-link" href="insert_rent_data.php" aria-expanded="false"><i data-feather="send" class="feather-icon"></i><span class="hide-menu">Rental
-                        </span></a>
-                    </li>
-                    <li class="sidebar-item"> <a class="sidebar-link sidebar-link" href="insert_book_data.php" aria-expanded="false"><i data-feather="book" class="feather-icon"></i><span class="hide-menu">Books</span></a></li>
-                    <li class="sidebar-item"> <a class="sidebar-link sidebar-link" href="add_account_data.php" aria-expanded="false"><i data-feather="user" class="feather-icon"></i><span class="hide-menu">User Account</span></a></li>
-                    <li class="sidebar-item"> <a class="sidebar-link sidebar-link" href="insert_genre_data.php" aria-expanded="false"><i class="icon-layers"></i><span class="hide-menu">Genre</span></a></li>
-                    <li class="sidebar-item"> <a class="sidebar-link sidebar-link" href="insert_publisher_data.php" aria-expanded="false"><i class="icon-people"></i><span class="hide-menu">Publisher</span></a></li>
-                    <li class="sidebar-item"> <a class="sidebar-link sidebar-link" href="insert_author_data.php" aria-expanded="false"><i class="icon-emotsmile"></i><span class="hide-menu">Authors</span></a></li>
-                  </ul>
-                </li>
+                <li class="sidebar-item"><a class="sidebar-link sidebar-link" href="user_rent.php" aria-expanded="false"><i data-feather="send" class="feather-icon"></i><span class="hide-menu">My Rent</span></a></li>
+                <li class="sidebar-item"><a class="sidebar-link sidebar-link" href="book_data.php" aria-expanded="false"><i data-feather="book" class="feather-icon"></i><span class="hide-menu">Books Data</span></a></li>
                 <li class="list-divider"></li>
                 <li class="sidebar-item"><a class="sidebar-link sidebar-link" href="logout.php" aria-expanded="false"><i data-feather="log-out" class="feather-icon"></i><span class="hide-menu">Logout</span></a></li>
               </ul>
@@ -186,13 +171,12 @@ foreach ($db->login($username) as $x) {
           <div class="page-breadcrumb">
             <div class="row">
               <div class="col-7 align-self-center">
-                <h4 class="page-title text-truncate text-dark font-weight-medium mb-1">Edit Account</h4>
+                <h4 class="page-title text-truncate text-dark font-weight-medium mb-1">Books Data</h4>
                 <div class="d-flex align-items-center">
                   <nav aria-label="breadcrumb">
                     <ol class="breadcrumb m-0 p-0">
-                      <li class="breadcrumb-item"><a href="browse_data.php" class="text-muted">Browse</a></li>
-                      <li class="breadcrumb-item text-muted active" aria-current="page">Edit</li>
-                      <li class="breadcrumb-item text-muted active" aria-current="page">Account</li>
+                      <li class="breadcrumb-item"><a href="../index.php" class="text-muted">Home</a></li>
+                      <li class="breadcrumb-item text-muted active" aria-current="page">Browse</li>
                     </ol>
                   </nav>
                 </div>
@@ -209,125 +193,107 @@ foreach ($db->login($username) as $x) {
             <!-- ============================================================== -->
             <!-- Start Page Content -->
             <!-- ============================================================== -->
-
-            <div class="col-sm-12 col-md-12 col-lg-12 px-0">
-              <div class="card">
-                <div class="card-body">
-                  <form class="row g-3" action="simpan_edit_data_peminjam.php" method="post" enctype="multipart/form-data">
-                    <div class="col-md-12 px-0">
-                      <div class="col-md-12">
-                        <div class="form-group">
-                          <label for="kode_peminjam" class="form-label">Username</label>
-                          <input type="text" class="form-control" id="kode_peminjam" maxlength="8" value="<?php echo $data_peminjam[0]['kode_peminjam']; ?>" disabled>
-                          <input type="hidden" class="form-control" id="kode_peminjam" name="kode_peminjam" maxlength="8" value="<?php echo $data_peminjam[0]['kode_peminjam']; ?>">
-                        </div>
-                      </div>
-                      <div class="col-md-12">
-                        <div class="form-group">
-                          <label for="nama_peminjam" class="form-label">Fullname</label>
-                          <input type="text" class="form-control" id="nama_peminjam" name="nama_peminjam" placeholder="<?php echo $data_peminjam[0]['nama_peminjam']; ?>" value="<?php echo $data_peminjam[0]['nama_peminjam']; ?>" required>
-                        </div>
-                      </div>
-                      <div class="row px-3">
-                        <div class="col-md-6">
-                          <div class="form-group">
-                            <label for="jenis_kelamin">Gender</label>
-                            <select class="form-control select2" style="width: 100%" id="jenis_kelamin" name="jenis_kelamin">
-                              <?php
-                              $no = 1;
-                              $kode_jenis_kelamin = $data_peminjam[0]['kode_prodi'];
-                              foreach ($db->tampil_data_jenis_kelamin() as $x) {
-                                echo "<option value=" . $x['kode_jk'];
-                                if ($x['kode_jk'] == $kode_jenis_kelamin) {
-                                  echo " selected=selected";
-                                }
-                                echo ">" . $x['keterangan_jk'] . "</option>";
-                              }
-                              ?>
-                            </select>
-                          </div>
-                        </div>
-                        <div class="col-md-6">
-                          <div class="form-group">
-                            <label for="tanggal_lahir">Date Birth</label>
-                            <input type="date" class="form-control" id="tanggal_lahir" name="tanggal_lahir" value="<?php echo $data_peminjam[0]['tanggal_lahir']; ?>">
-                          </div>
-                        </div>
-                      </div>
-                      <div class=" col-md-12">
-                        <div class="form-group">
-                          <label for="pekerjaan" class="form-label">Job</label>
-                          <input type="text" class="form-control" id="pekerjaan" name="pekerjaan" placeholder="<?php echo $data_peminjam[0]['pekerjaan']; ?>" value="<?php echo $data_peminjam[0]['pekerjaan']; ?>">
-                        </div>
-                      </div>
-                      <div class="col-md-12">
-                        <div class="form-group">
-                          <label for="alamat">Address</label>
-                          <textarea class="form-control" id="alamat" name="alamat" rows="2" placeholder="Text Here..." style="resize: none;"><?php echo $data_peminjam[0]['alamat']; ?></textarea>
-                        </div>
-                      </div>
-                      <div class="col-md-12">
-                        <div class="form-group">
-                          <button class="btn btn-primary w-100" type="submit">Submit</button>
-                        </div>
-                      </div>
+            <div class="row">
+              <div class="col-lg-12">
+                <div class="card">
+                  <div class="card-body">
+                    <div class="table-responsive">
+                      <table id="default_order" class="table table-striped table-bordered table-hover display no-wrap" style="width:100%">
+                        <thead>
+                          <tr>
+                            <th>No</th>
+                            <th>Kode Buku</th>
+                            <th>Judul Buku</th>
+                            <th>Pengarang</th>
+                            <th>Genre</th>
+                            <th>Penerbit</th>
+                            <th>ISBN</th>
+                            <th>Tahun</th>
+                            <th>Deskripsi</th>
+                            <th>Jumlah</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <?php
+                          $no = 1;
+                          foreach ($db->tampil_data_buku() as $x) {
+                          ?>
+                            <tr>
+                              <td><?php echo $no++; ?></td>
+                              <td><?php echo $x['kode_buku']; ?></td>
+                              <td><?php echo $x['judul_buku']; ?></td>
+                              <td><?php echo $x['nama_pengarang']; ?></td>
+                              <td><?php echo $x['nama_jenis_buku']; ?></td>
+                              <td><?php echo $x['nama_penerbit']; ?></td>
+                              <td><?php echo $x['isbn']; ?></td>
+                              <td><?php echo $x['tahun']; ?></td>
+                              <td><?php echo $x['deskripsi']; ?></td>
+                              <td><?php echo $x['jumlah']; ?></td>
+                            </tr>
+                          <?php
+                          }
+                          ?>
+                        </tbody>
+                      </table>
                     </div>
-                  </form>
-                </div>
-              </div>
-              <!-- ============================================================== -->
-              <!-- End PAge Content -->
-              <!-- ============================================================== -->
-              <!-- ============================================================== -->
-              <!-- Right sidebar -->
-              <!-- ============================================================== -->
-              <!-- .right-sidebar -->
-              <!-- ============================================================== -->
-              <!-- End Right sidebar -->
-              <!-- ============================================================== -->
-              <!-- ============================================================== -->
-              <!-- End Container fluid  -->
-              <!-- ============================================================== -->
-              <!-- ============================================================== -->
-              <!-- footer -->
-              <!-- ============================================================== -->
-              <!-- ============================================================== -->
-              <!-- End footer -->
-              <!-- ============================================================== -->
+                  </div> <!-- end card-body-->
+                </div> <!-- end card-->
+              </div> <!-- end col -->
             </div>
+            <!-- end row-->
             <!-- ============================================================== -->
-            <!-- End Page wrapper  -->
+            <!-- End PAge Content -->
             <!-- ============================================================== -->
           </div>
           <!-- ============================================================== -->
-          <!-- End Wrapper -->
+          <!-- End Container fluid  -->
           <!-- ============================================================== -->
-          <!-- End Wrapper -->
           <!-- ============================================================== -->
-          <!-- All Jquery -->
+          <!-- footer -->
           <!-- ============================================================== -->
-          <script src="../assets/libs/jquery/dist/jquery.min.js "></script>
-          <!-- Bootstrap tether Core JavaScript -->
-          <script src="../assets/libs/popper.js/dist/umd/popper.min.js "></script>
-          <script src="../assets/libs/bootstrap/dist/js/bootstrap.min.js "></script>
-          <!-- apps -->
-          <script src="../dist/js/app.min.js "></script>
-          <script src="../dist/js/app.init-menusidebar.js"></script>
-          <script src="../dist/js/app-style-switcher.js "></script>
-          <script src="../dist/js/feather.min.js"></script>
-          <!-- slimscrollbar scrollbar JavaScript -->
-          <script src="../assets/libs/perfect-scrollbar/dist/perfect-scrollbar.jquery.min.js "></script>
-          <script src="../assets/extra-libs/sparkline/sparkline.js "></script>
-          <!-- Select2 -->
-          <script src="../assets/extra-libs/select2/js/select2.min.js"></script>
-          <!-- theme js -->
-          <!--Menu sidebar -->
-          <script src="../dist/js/sidebarmenu.js "></script>
-          <!--Custom JavaScript -->
-          <script src="../dist/js/custom.js "></script>
+          <!-- ============================================================== -->
+          <!-- End footer -->
+          <!-- ============================================================== -->
+        </div>
+        <!-- ============================================================== -->
+        <!-- End Page wrapper  -->
+        <!-- ============================================================== -->
+      </div>
+      <!-- ============================================================== -->
+      <!-- End Wrapper -->
+      <!-- ============================================================== -->
+      <!-- End Wrapper -->
+      <!-- ============================================================== -->
+      <!-- All Jquery -->
+      <!-- ============================================================== -->
+      <script src="../assets/libs/jquery/dist/jquery.min.js"></script>
+      <!-- Bootstrap tether Core JavaScript -->
+      <script src="../assets/libs/popper.js/dist/umd/popper.min.js"></script>
+      <script src="../assets/libs/bootstrap/dist/js/bootstrap.min.js"></script>
+      <!-- apps -->
+      <!-- apps -->
+      <script src="../dist/js/app-style-switcher.js"></script>
+      <script src="../dist/js/feather.min.js"></script>
+      <!-- slimscrollbar scrollbar JavaScript -->
+      <script src="../assets/libs/perfect-scrollbar/dist/perfect-scrollbar.jquery.min.js"></script>
+      <script src="../assets/extra-libs/sparkline/sparkline.js"></script>
+      <!--Wave Effects -->
+      <!-- themejs -->
+      <!--Menu sidebar -->
+      <script src="../dist/js/sidebarmenu.js"></script>
+      <!--Custom JavaScript -->
+      <script src="../dist/js/custom.min.js"></script>
+      <!-- This Page JS -->
+      <script src="../assets/extra-libs/prism/prism.js"></script>
+      <!--This page plugins -->
+      <script src="../assets/extra-libs/datatables.net/js/jquery.dataTables.min.js"></script>
+      <script src="../assets/extra-libs/datatables.net/js/buttons.colVis.min.js"></script>
+      <script src="../dist/js/pages/datatable/datatable-basic.init.js"></script>
+      </div>
     </body>
 
     </html>
+
 <?php
   } else {
     header("Location: ../login.php");
